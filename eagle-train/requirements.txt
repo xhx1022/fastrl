@@ -1,0 +1,9 @@
+accelerate
+datasets
+numpy
+pandas
+transformers==4.51.1
+torchdata
+deepspeed
+wandb
+torch==2.6.0

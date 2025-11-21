@@ -1,0 +1,11 @@
+data:
+  data_path: your_data_path
+  max_length: 35768  # Maximum sequence length
+  save_dir: your_save_dir
+  process_rank: 0
+  sample_ratio: 0.15
+  mode: eagle2  # eagle2 or eagle3
+  dp_size: 1
+model:
+  base_model_path: your_model_path
+
