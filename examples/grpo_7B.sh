@@ -1,15 +1,17 @@
 export TOKENIZERS_PARALLELISM=true
 export NCCL_DEBUG=WARN
+export RAY_DEDUP_LOGS=0
 export MKL_SERVICE_FORCE_INTEL=1
 # export RAY_DEBUG_POST_MORTEM=1
 
-CKPT_PATH=path-to-your-runs
+CKPT_PATH=/root/projects/fastrl/checkpoint
 
 PROJECT_NAME=FastRL
-EXPERIMENT_NAME=Qwen2.5-7B
-MODEL_PATH=Qwen/Qwen2.5-7B
-DATA_PATH=Eurus-2-RL-Data
-SPEC_MODEL_PATH=mit-han-lab/Qwen2.5-7B-Eagle-RL
+RANDOM_SUFFIX=$(date +%s%N | cut -b1-6)  
+EXPERIMENT_NAME=Qwen2.5-7B-${RANDOM_SUFFIX}
+MODEL_PATH=~/models/Qwen2.5-7B
+DATA_PATH=~/datasets/Eurus-2-RL-Data
+SPEC_MODEL_PATH=~/models/Qwen2.5-7B-Eagle-RL
 
 train_prompt_bsz=64
 n_resp_per_prompt=8
@@ -26,14 +28,14 @@ python3 -m verl.trainer.main_fastrl \
     speculative.eagle.spec_model_path=$SPEC_MODEL_PATH \
     speculative.enable=true \
     speculative.bs_threshold=32 \
-    data.train_files=$DATA_PATH/train.parquet \
-    data.val_files=$DATA_PATH/validation.parquet \
+    data.train_files=$DATA_PATH/filtered_train.parquet \
+    data.val_files=$DATA_PATH/filtered_test.parquet \
     data.return_raw_chat=True \
     data.return_full_prompt=True \
     data.train_batch_size=${train_prompt_bsz} \
     data.max_prompt_length=${max_prompt_length} \
     data.max_response_length=${max_response_length} \
-    data.filter_overlong_prompts=True \
+    data.filter_overlong_prompts=False \
     data.truncation='error' \
     actor_rollout_ref.model.path=$MODEL_PATH \
     actor_rollout_ref.actor.strategy=fsdp2 \
@@ -67,7 +69,7 @@ python3 -m verl.trainer.main_fastrl \
     algorithm.adv_estimator=grpo \
     algorithm.use_kl_in_reward=False \
     trainer.critic_warmup=0 \
-    trainer.logger="['console']" \
+    trainer.logger="['console','wandb']" \
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
     trainer.default_local_dir=$CKPT_PATH/$PROJECT_NAME/$EXPERIMENT_NAME \

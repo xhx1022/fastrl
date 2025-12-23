@@ -1578,6 +1578,7 @@ class TokenizerManager(TokenizerCommunicatorMixin):
                 meta_info["spec_accept_length"] = (
                     recv_obj.completion_tokens[i] / recv_obj.spec_verify_ct[i]
                 )
+                # print(f"spec_accept_rate: {meta_info['spec_accept_rate']}, spec_accept_length: {meta_info['spec_accept_length']}, accepted_tokens / recv_obj.spec_verify_ct[i] : {accepted_tokens / recv_obj.spec_verify_ct[i]}, total_draft_tokens: {total_draft_tokens}")
 
     def collect_metrics(self, state: ReqState, recv_obj: BatchStrOutput, i: int):
         completion_tokens = (
